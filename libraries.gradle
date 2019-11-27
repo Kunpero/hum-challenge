@@ -1,0 +1,9 @@
+ext {
+    guiceVesrion = '4.2.0'
+
+    libraries = [
+            lombok              : "org.projectlombok:lombok:1.18.4",
+            slf4jSimple         : "org.slf4j:slf4j-simple:1.7.25",
+            jUnit               : "junit:junit:4.12"
+    ]
+}

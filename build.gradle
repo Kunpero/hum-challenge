@@ -1,0 +1,45 @@
+group 'rs.kunpero.hum-challenge'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+
+sourceCompatibility = 1.11
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'rs.kunpero.humchallenge.App'
+    }
+}
+
+shadowJar {
+    baseName = 'hum-challenge'
+    classifier = null
+    version = null
+    manifest {
+        inheritFrom project.tasks.jar.manifest
+    }
+}
+
+apply from: "./libraries.gradle"
+
+dependencies {
+    implementation libraries.slf4jSimple
+    compileOnly libraries.lombok
+    annotationProcessor libraries.lombok
+
+    testCompile libraries.jUnit
+}
