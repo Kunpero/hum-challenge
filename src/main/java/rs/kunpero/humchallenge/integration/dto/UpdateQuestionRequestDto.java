@@ -5,7 +5,9 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class Answer {
+public class UpdateQuestionRequestDto {
+    private String user;
+
     private int questionIndex;
 
     private int optionIndex;

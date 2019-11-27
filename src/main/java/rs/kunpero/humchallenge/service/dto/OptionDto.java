@@ -8,8 +8,6 @@ import lombok.experimental.Accessors;
 public class OptionDto {
     private int index;
 
-    private String uuid;
-
     private String description;
 
     private boolean isSelected;

@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class QueryQuestionResponse {
-    private String uuid;
+    private int index;
 
     private String description;
 

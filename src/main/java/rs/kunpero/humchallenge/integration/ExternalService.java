@@ -22,5 +22,5 @@ public interface ExternalService {
      * @param request - Request contains list of filled answers
      * @return {@code SubmitQuestionnaireResponse} - Questionnaire result description
      */
-    SubmitQuestionnaireResponse submitQuestionary(SubmitQuestionnaireRequest request);
+    SubmitQuestionnaireResponse submitQuestionnaire(SubmitQuestionnaireRequest request);
 }

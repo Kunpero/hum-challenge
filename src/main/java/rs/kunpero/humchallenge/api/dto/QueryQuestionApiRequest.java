@@ -5,8 +5,4 @@ import lombok.Data;
 @Data
 public class QueryQuestionApiRequest {
     private String user;
-
-    private int questionIndex;
-
-    private int optionIndex;
 }

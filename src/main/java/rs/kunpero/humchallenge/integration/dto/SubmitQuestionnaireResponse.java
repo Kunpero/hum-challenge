@@ -4,5 +4,7 @@ import lombok.Data;
 
 @Data
 public class SubmitQuestionnaireResponse {
+    private boolean isSuccessful;
+
     private String resultDescription;
 }

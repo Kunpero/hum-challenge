@@ -7,9 +7,10 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class QueryQuestionApiResponse {
+public class ApiQuestion {
+    private int index;
 
-    private boolean hasNext;
+    private String description;
 
-    private List<ApiQuestion> questions;
+    private List<ApiOption> options;
 }

@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class QueryQuestionRequest {
-    private String uuid;
+    private int nextIndex;
 }

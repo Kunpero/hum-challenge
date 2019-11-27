@@ -7,9 +7,6 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class QueryQuestionApiResponse {
-
-    private boolean hasNext;
-
+public class UpdateQuestionResponse {
     private List<ApiQuestion> questions;
 }

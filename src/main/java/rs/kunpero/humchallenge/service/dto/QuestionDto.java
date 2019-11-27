@@ -11,8 +11,6 @@ import java.util.List;
 public class QuestionDto {
     private int index;
 
-    private String uuid;
-
     private String description;
 
     private List<OptionDto> options = new ArrayList<>();

@@ -8,8 +8,8 @@ import rs.kunpero.humchallenge.integration.dto.QueryQuestionRequest;
 import rs.kunpero.humchallenge.integration.dto.QueryQuestionResponse;
 import rs.kunpero.humchallenge.integration.dto.SubmitQuestionnaireRequest;
 import rs.kunpero.humchallenge.integration.dto.SubmitQuestionnaireResponse;
-import rs.kunpero.humchallenge.service.dto.InitQuestionnaireRequestDto;
-import rs.kunpero.humchallenge.service.dto.InitQuestionnaireResponseDto;
+import rs.kunpero.humchallenge.integration.dto.UpdateQuestionRequestDto;
+import rs.kunpero.humchallenge.integration.dto.UpdateQuestionResponseDto;
 import rs.kunpero.humchallenge.service.dto.OptionDto;
 import rs.kunpero.humchallenge.service.dto.QueryQuestionRequestDto;
 import rs.kunpero.humchallenge.service.dto.QueryQuestionResponseDto;
@@ -18,7 +18,6 @@ import rs.kunpero.humchallenge.service.dto.QuestionnaireRecord;
 import rs.kunpero.humchallenge.service.dto.SubmitRequestDto;
 import rs.kunpero.humchallenge.service.dto.SubmitResponseDto;
 import rs.kunpero.humchallenge.util.exception.ExternalServiceException;
-import rs.kunpero.humchallenge.util.exception.NoUserSessionException;
 import rs.kunpero.humchallenge.util.exception.SubmitException;
 
 import java.util.List;
@@ -31,7 +30,7 @@ import static java.util.stream.Collectors.toList;
 public class QuestionnaireService {
     private static final Logger log = LoggerFactory.getLogger(QuestionnaireService.class);
 
-    private static Map<String, QuestionnaireRecord> questions = new ConcurrentHashMap<>();
+    private static Map<String, QuestionnaireRecord> records = new ConcurrentHashMap<>();
 
     private final ExternalService externalService;
 
@@ -39,56 +38,49 @@ public class QuestionnaireService {
         this.externalService = externalService;
     }
 
-    public InitQuestionnaireResponseDto init(InitQuestionnaireRequestDto requestDto) {
-        questions.put(requestDto.getUser(), new QuestionnaireRecord());
-        return new InitQuestionnaireResponseDto()
-                .setQuestionnaireDescription("Programming Challenge for the Role of Java Developer!");
+    public UpdateQuestionResponseDto updateQuestion(UpdateQuestionRequestDto requestDto) {
+        int questionIndex = requestDto.getQuestionIndex();
+        int optionIndex = requestDto.getOptionIndex();
+
+        QuestionnaireRecord record = records.get(requestDto.getUser());
+
+        if (record == null) {
+            log.warn("No record for current user [{}]", requestDto.getUser());
+            return null;
+        }
+
+        List<QuestionDto> questions = record.getQuestions();
+        if (questionIndex >= questions.size() || questionIndex < 0) {
+            log.warn("No question with that index [{}]", questionIndex);
+            return new UpdateQuestionResponseDto()
+                    .setQuestions(questions);
+        }
+
+        List<OptionDto> options = questions.get(questionIndex).getOptions();
+        updateOptions(options, optionIndex);
+
+        log.info("Question with index [{}] was successfully updated", questionIndex);
+        return new UpdateQuestionResponseDto()
+                .setQuestions(questions);
     }
 
-    public QueryQuestionResponseDto queryQuestion(QueryQuestionRequestDto requestDto) throws NoUserSessionException, IllegalArgumentException, ExternalServiceException {
+    public QueryQuestionResponseDto queryQuestion(QueryQuestionRequestDto requestDto) throws ExternalServiceException {
         String user = requestDto.getUser();
-        QuestionnaireRecord record = questions.get(user);
+        QuestionnaireRecord record = records.get(user);
 
-        checkSession(record);
+        records.putIfAbsent(user, new QuestionnaireRecord());
 
-        Integer questionIndex = requestDto.getQuestionIndex();
         List<QuestionDto> questions = record.getQuestions();
+        int nextIndex = !questions.isEmpty() ? questions.get(questions.size() - 1).getIndex() + 1 : 0;
 
-        if (questionIndex == null) {
-            if (!questions.isEmpty()) {
-                return new QueryQuestionResponseDto()
-                        .setHasNext(record.isHasNext())
-                        .setQuestion(questions.get(0));
-            }
-            QueryQuestionRequest request = new QueryQuestionRequest(null);
-            return addNewQuestion(questions, externalService.queryQuestion(request));
-        }
-
-        if (questionIndex >= questions.size() || questionIndex < 0) {
-            throw new IllegalArgumentException("No question with that index");
-        }
-
-        QuestionDto question = questions.get(questionIndex);
-        if (!record.isHasNext() || questionIndex != questions.size() - 1) {
-            var options = question.getOptions();
-            var updatedOptions = updateOptions(options, requestDto.getSelectedOptionIndex());
-
-            question.setOptions(updatedOptions);
-            return new QueryQuestionResponseDto()
-                    .setHasNext(record.isHasNext())
-                    .setQuestion(question);
-        }
-
-        QueryQuestionRequest request = new QueryQuestionRequest(question.getUuid());
+        QueryQuestionRequest request = new QueryQuestionRequest(nextIndex);
         QueryQuestionResponse response = wrapExternalMethod(externalService::queryQuestion, request);
         return addNewQuestion(questions, response);
     }
 
-    public SubmitResponseDto submit(SubmitRequestDto requestDto) throws NoUserSessionException, SubmitException, ExternalServiceException {
+    public SubmitResponseDto submit(SubmitRequestDto requestDto) throws SubmitException, ExternalServiceException {
         String user = requestDto.getUser();
-        QuestionnaireRecord record = questions.get(user);
-
-        checkSession(record);
+        QuestionnaireRecord record = records.get(user);
 
         List<Answer> answers = record.getQuestions().stream()
                 .map(q -> {
@@ -97,16 +89,16 @@ public class QuestionnaireService {
                             .findFirst()
                             .orElseThrow(() -> new SubmitException("Option is not selected"));
 
-                    var optionUuid = option.getUuid();
+                    var optionIndex = option.getIndex();
                     return new Answer()
-                            .setQuestionUuid(q.getUuid())
-                            .setOptionUuid(optionUuid);
+                            .setQuestionIndex(q.getIndex())
+                            .setOptionIndex(optionIndex);
                 })
                 .collect(toList());
 
-        SubmitQuestionnaireResponse response = wrapExternalMethod(externalService::submitQuestionary, new SubmitQuestionnaireRequest(answers));
+        SubmitQuestionnaireResponse response = wrapExternalMethod(externalService::submitQuestionnaire, new SubmitQuestionnaireRequest(answers));
         return new SubmitResponseDto()
-                .setSuccessful(true)
+                .setSuccessful(response.isSuccessful())
                 .setResultDescription(response.getResultDescription());
     }
 
@@ -119,31 +111,29 @@ public class QuestionnaireService {
         }
     }
 
-    private void checkSession(QuestionnaireRecord record) throws NoUserSessionException{
-        if (record == null) {
-            throw new NoUserSessionException("Questionnaire session was not initialized for user");
-        }
-    }
-
     private QueryQuestionResponseDto addNewQuestion(List<QuestionDto> questions, QueryQuestionResponse response) {
         QuestionDto newQuestion = new QuestionDto()
                 .setIndex(questions.size())
-                .setUuid(response.getUuid())
-                .setDescription(response.getUuid())
+                .setDescription(response.getDescription())
                 .setOptions(response.getOptions().stream()
                         .map(o -> new OptionDto()
+                                .setIndex(o.getIndex())
                                 .setSelected(false)
-                                .setDescription(o.getDescription())
-                                .setUuid(o.getUuid()))
+                                .setDescription(o.getDescription()))
                         .collect(toList()));
         questions.add(newQuestion);
 
         return new QueryQuestionResponseDto()
                 .setHasNext(response.isHasNext())
-                .setQuestion(newQuestion);
+                .setQuestions(questions);
     }
 
     private List<OptionDto> updateOptions(List<OptionDto> options, int selectedOptionIndex) {
+        if (selectedOptionIndex > options.size() - 1) {
+            log.warn("No option with that index [{}]", selectedOptionIndex);
+            return options;
+        }
+
         var updatedOptions = options.stream()
                 .map(o -> o.setSelected(false))
                 .collect(toList());

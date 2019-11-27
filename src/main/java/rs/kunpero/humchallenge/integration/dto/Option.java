@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Option {
-    private String uuid;
+    private int index;
 
     private String description;
 }
