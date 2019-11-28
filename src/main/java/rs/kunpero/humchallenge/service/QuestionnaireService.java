@@ -20,8 +20,10 @@ import rs.kunpero.humchallenge.service.dto.SubmitResponseDto;
 import rs.kunpero.humchallenge.util.exception.ExternalServiceException;
 import rs.kunpero.humchallenge.util.exception.SubmitException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -30,11 +32,17 @@ import static java.util.stream.Collectors.toList;
 public class QuestionnaireService {
     private static final Logger log = LoggerFactory.getLogger(QuestionnaireService.class);
 
-    private static Map<String, QuestionnaireRecord> records = new ConcurrentHashMap<>();
+    private final Map<String, QuestionnaireRecord> records;
 
     private final ExternalService externalService;
 
     public QuestionnaireService(ExternalService externalService) {
+        this.externalService = externalService;
+        this.records = new ConcurrentHashMap<>();
+    }
+
+    QuestionnaireService(Map<String, QuestionnaireRecord> records, ExternalService externalService) {
+        this.records = records;
         this.externalService = externalService;
     }
 
@@ -46,20 +54,23 @@ public class QuestionnaireService {
 
         if (record == null) {
             log.warn("No record for current user [{}]", requestDto.getUser());
-            return null;
+            return new UpdateQuestionResponseDto()
+                    .setQuestions(new ArrayList<>());
         }
 
         List<QuestionDto> questions = record.getQuestions();
-        if (questionIndex >= questions.size() || questionIndex < 0) {
+
+        Optional<QuestionDto> optionalQuestion = record.getQuestion(questionIndex);
+        if (optionalQuestion.isEmpty()) {
             log.warn("No question with that index [{}]", questionIndex);
             return new UpdateQuestionResponseDto()
                     .setQuestions(questions);
         }
 
-        List<OptionDto> options = questions.get(questionIndex).getOptions();
-        updateOptions(options, optionIndex);
+        QuestionDto question = optionalQuestion.get();
+        List<OptionDto> options = question.getOptions();
+        question.setOptions(updateOptions(options, optionIndex));
 
-        log.info("Question with index [{}] was successfully updated", questionIndex);
         return new UpdateQuestionResponseDto()
                 .setQuestions(questions);
     }
@@ -68,14 +79,28 @@ public class QuestionnaireService {
         String user = requestDto.getUser();
         QuestionnaireRecord record = records.get(user);
 
+        if (record == null) {
+            log.warn("No record for current user [{}]", requestDto.getUser());
+            return new QueryQuestionResponseDto()
+                    .setQuestions(new ArrayList<>());
+        }
+
         records.putIfAbsent(user, new QuestionnaireRecord());
 
         List<QuestionDto> questions = record.getQuestions();
+
+        if (!record.isHasNext()) {
+            log.info("No more questions available");
+            return new QueryQuestionResponseDto()
+                    .setHasNext(record.isHasNext())
+                    .setQuestions(questions);
+        }
+
         int nextIndex = !questions.isEmpty() ? questions.get(questions.size() - 1).getIndex() + 1 : 0;
 
         QueryQuestionRequest request = new QueryQuestionRequest(nextIndex);
         QueryQuestionResponse response = wrapExternalMethod(externalService::queryQuestion, request);
-        return addNewQuestion(questions, response);
+        return addNewQuestion(questions, response, nextIndex);
     }
 
     public SubmitResponseDto submit(SubmitRequestDto requestDto) throws SubmitException, ExternalServiceException {
@@ -111,34 +136,42 @@ public class QuestionnaireService {
         }
     }
 
-    private QueryQuestionResponseDto addNewQuestion(List<QuestionDto> questions, QueryQuestionResponse response) {
+    private QueryQuestionResponseDto addNewQuestion(List<QuestionDto> questions, QueryQuestionResponse response, int nextIndex) {
+        if (response.getQuestion() == null) {
+            log.warn("No question with index [{}]", nextIndex);
+            return new QueryQuestionResponseDto()
+                    .setHasNext(response.isHasNext())
+                    .setQuestions(questions);
+        }
         QuestionDto newQuestion = new QuestionDto()
                 .setIndex(questions.size())
-                .setDescription(response.getDescription())
-                .setOptions(response.getOptions().stream()
+                .setDescription(response.getQuestion().getDescription())
+                .setOptions(response.getQuestion().getOptions().stream()
                         .map(o -> new OptionDto()
                                 .setIndex(o.getIndex())
                                 .setSelected(false)
                                 .setDescription(o.getDescription()))
                         .collect(toList()));
         questions.add(newQuestion);
-
         return new QueryQuestionResponseDto()
                 .setHasNext(response.isHasNext())
                 .setQuestions(questions);
     }
 
     private List<OptionDto> updateOptions(List<OptionDto> options, int selectedOptionIndex) {
-        if (selectedOptionIndex > options.size() - 1) {
+        if (options.stream().filter(o -> o.getIndex() == selectedOptionIndex).findFirst().isEmpty()) {
             log.warn("No option with that index [{}]", selectedOptionIndex);
             return options;
         }
 
         var updatedOptions = options.stream()
-                .map(o -> o.setSelected(false))
+                .map(o -> new OptionDto()
+                        .setIndex(o.getIndex())
+                        .setDescription(o.getDescription())
+                        .setSelected(o.getIndex() == selectedOptionIndex))
                 .collect(toList());
 
-        updatedOptions.get(selectedOptionIndex).setSelected(true);
+        log.info("Question with index [{}] was successfully updated", selectedOptionIndex);
         return updatedOptions;
     }
 }
