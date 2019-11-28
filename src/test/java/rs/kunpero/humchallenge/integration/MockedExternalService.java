@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class MockedExternalService implements ExternalService {
     public static final int UNEXPECTED_ERROR = -100;
+    public static final String EXCELLENT_RESULT = "Excellent!";
+
     private static final Map<Integer, Map<Integer, Integer>> RESULT_MAP = Map.of(
             0, Map.of(0, 5, 1, 3, 2, 0),
             1, Map.of(0, 0, 1, 1, 2, 3, 3, 5),
@@ -50,9 +52,9 @@ public class MockedExternalService implements ExternalService {
         int resultSum = request.getAnswers().stream()
                 .mapToInt(a -> {
                     if (a.getQuestionIndex() == UNEXPECTED_ERROR) {
-                        throw new RuntimeException("Unecpected error");
+                        throw new RuntimeException("Unexpected error");
                     }
-                    return RESULT_MAP.get(a.getOptionIndex()).get(a.getOptionIndex());
+                    return RESULT_MAP.get(a.getQuestionIndex()).get(a.getOptionIndex());
                 })
                 .sum();
         String resultDescription = null;
@@ -66,7 +68,7 @@ public class MockedExternalService implements ExternalService {
         }
 
         if (resultSum > 10) {
-            resultDescription = "Excellent!";
+            resultDescription = EXCELLENT_RESULT;
         }
         return new SubmitQuestionnaireResponse(true, resultDescription);
     }

@@ -69,7 +69,7 @@ public class QuestionnaireService {
 
         QuestionDto question = optionalQuestion.get();
         List<OptionDto> options = question.getOptions();
-        question.setOptions(updateOptions(options, optionIndex));
+        question.setOptions(updateOptions(options, optionIndex, questionIndex));
 
         return new UpdateQuestionResponseDto()
                 .setQuestions(questions);
@@ -156,7 +156,7 @@ public class QuestionnaireService {
                 .setQuestions(questions);
     }
 
-    private List<OptionDto> updateOptions(List<OptionDto> options, int selectedOptionIndex) {
+    private List<OptionDto> updateOptions(List<OptionDto> options, int selectedOptionIndex, int questionIndex) {
         if (options.stream().filter(o -> o.getIndex() == selectedOptionIndex).findFirst().isEmpty()) {
             log.warn("No option with that index [{}]", selectedOptionIndex);
             return options;
@@ -169,7 +169,7 @@ public class QuestionnaireService {
                         .setSelected(o.getIndex() == selectedOptionIndex))
                 .collect(toList());
 
-        log.info("Question with index [{}] was successfully updated", selectedOptionIndex);
+        log.info("Question with index [{}] was successfully updated", questionIndex);
         return updatedOptions;
     }
 }

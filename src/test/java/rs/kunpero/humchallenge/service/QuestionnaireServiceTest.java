@@ -99,7 +99,7 @@ public class QuestionnaireServiceTest {
         Map<String, QuestionnaireRecord> mockRecords = new HashMap<>();
 
         List<QuestionDto> mockedQuestions = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             QuestionDto question = buildQuestionDto(i, buildOptionDtoList(2));
 
             mockRecord.setQuestions(mockedQuestions);
@@ -112,7 +112,7 @@ public class QuestionnaireServiceTest {
         QueryQuestionRequestDto requestDto = buildQueryQuestionRequest(MOCKED_USER);
         QueryQuestionResponseDto responseDto = questionnaireService.queryQuestion(requestDto);
 
-        assert responseDto.getQuestions().size() == 2;
+        assert responseDto.getQuestions().size() == 3;
     }
 
     @Test
