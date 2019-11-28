@@ -3,6 +3,6 @@ package rs.kunpero.humchallenge.api.dto;
 import lombok.Data;
 
 @Data
-public class SubmitRequest {
+public class SubmitApiRequest {
     private String user;
 }

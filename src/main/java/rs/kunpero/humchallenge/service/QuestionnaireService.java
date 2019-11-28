@@ -77,15 +77,9 @@ public class QuestionnaireService {
 
     public QueryQuestionResponseDto queryQuestion(QueryQuestionRequestDto requestDto) throws ExternalServiceException {
         String user = requestDto.getUser();
-        QuestionnaireRecord record = records.get(user);
-
-        if (record == null) {
-            log.warn("No record for current user [{}]", requestDto.getUser());
-            return new QueryQuestionResponseDto()
-                    .setQuestions(new ArrayList<>());
-        }
 
         records.putIfAbsent(user, new QuestionnaireRecord());
+        QuestionnaireRecord record = records.get(user);
 
         List<QuestionDto> questions = record.getQuestions();
 
@@ -109,12 +103,16 @@ public class QuestionnaireService {
 
         List<Answer> answers = record.getQuestions().stream()
                 .map(q -> {
-                    var option = q.getOptions().stream()
+                    var selectedOptions = q.getOptions().stream()
                             .filter(OptionDto::isSelected)
-                            .findFirst()
-                            .orElseThrow(() -> new SubmitException("Option is not selected"));
+                            .collect(toList());
 
-                    var optionIndex = option.getIndex();
+                    if (selectedOptions.size() != 1) {
+                        log.warn("Incorrect selected options count");
+                        throw new SubmitException(String.format("Incorrect selected options count for question [%s]", q.getIndex()));
+                    }
+
+                    var optionIndex = selectedOptions.get(0).getIndex();
                     return new Answer()
                             .setQuestionIndex(q.getIndex())
                             .setOptionIndex(optionIndex);

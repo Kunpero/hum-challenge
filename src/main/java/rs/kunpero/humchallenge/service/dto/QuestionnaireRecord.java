@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Data
 public class QuestionnaireRecord {
-    private boolean hasNext;
+    private boolean hasNext = true;
 
     private List<QuestionDto> questions = new ArrayList<>();
 

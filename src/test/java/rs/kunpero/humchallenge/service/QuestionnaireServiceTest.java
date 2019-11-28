@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import rs.kunpero.humchallenge.integration.MockedExternalService;
-import rs.kunpero.humchallenge.integration.dto.SubmitQuestionnaireRequest;
 import rs.kunpero.humchallenge.integration.dto.UpdateQuestionRequestDto;
 import rs.kunpero.humchallenge.integration.dto.UpdateQuestionResponseDto;
 import rs.kunpero.humchallenge.service.dto.OptionDto;

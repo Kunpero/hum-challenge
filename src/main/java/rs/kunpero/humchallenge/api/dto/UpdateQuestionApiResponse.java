@@ -3,10 +3,10 @@ package rs.kunpero.humchallenge.api.dto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Data
 @Accessors(chain = true)
-public class SubmitResponse {
-    private boolean isSuccessful;
-
-    private String resultDescription;
+public class UpdateQuestionApiResponse {
+    private List<ApiQuestion> questions;
 }
