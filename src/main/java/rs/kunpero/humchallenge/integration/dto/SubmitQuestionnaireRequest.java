@@ -1,11 +1,13 @@
 package rs.kunpero.humchallenge.integration.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
-@Data
+@Getter
+@ToString
 @AllArgsConstructor
 public class SubmitQuestionnaireRequest {
     private List<Answer> answers;

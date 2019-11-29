@@ -1,10 +1,12 @@
 package rs.kunpero.humchallenge.integration.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
-@Accessors(chain = true)
+@Getter
+@ToString
+@AllArgsConstructor
 public class UpdateQuestionRequestDto {
     private String user;
 

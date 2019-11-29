@@ -56,9 +56,7 @@ public class QuestionnaireManagerImpl implements QuestionnaireManager {
                 SubmitResponseDto responseDto = questionnaireService.submit(convert(request));
                 return convert(responseDto);
             } catch (SubmitException | ExternalServiceException ex) {
-                return new SubmitApiResponse()
-                        .setSuccessful(false)
-                        .setResultDescription(ex.getMessage());
+                return new SubmitApiResponse(false, ex.getMessage());
             }
         };
         return synchronize(action, request.getUser());

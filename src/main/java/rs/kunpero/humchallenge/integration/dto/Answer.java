@@ -1,10 +1,12 @@
 package rs.kunpero.humchallenge.integration.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
-@Accessors(chain = true)
+@Getter
+@AllArgsConstructor
+@ToString
 public class Answer {
     private int questionIndex;
 

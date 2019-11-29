@@ -1,10 +1,12 @@
 package rs.kunpero.humchallenge.api.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
-@Accessors(chain = true)
+@Getter
+@AllArgsConstructor
+@ToString
 public class ApiOption {
     private int index;
 

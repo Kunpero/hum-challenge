@@ -21,17 +21,13 @@ import static java.util.stream.Collectors.toList;
 public class QuestionnaireConverter {
 
     public static UpdateQuestionRequestDto convert(UpdateQuestionApiRequest request) {
-        return new UpdateQuestionRequestDto()
-                .setUser(request.getUser())
-                .setQuestionIndex(request.getQuestionIndex())
-                .setOptionIndex(request.getOptionIndex());
+        return new UpdateQuestionRequestDto(request.getUser(), request.getQuestionIndex(), request.getOptionIndex());
     }
 
     public static UpdateQuestionApiResponse convert(UpdateQuestionResponseDto response) {
-        return new UpdateQuestionApiResponse()
-                .setQuestions(response.getQuestions().stream()
-                        .map(QuestionnaireConverter::convert)
-                        .collect(toList()));
+        return new UpdateQuestionApiResponse(response.getQuestions().stream()
+                .map(QuestionnaireConverter::convert)
+                .collect(toList()));
     }
 
     public static QueryQuestionRequestDto convert(QueryQuestionApiRequest request) {
@@ -40,11 +36,9 @@ public class QuestionnaireConverter {
     }
 
     public static QueryQuestionApiResponse convert(QueryQuestionResponseDto response) {
-        return new QueryQuestionApiResponse()
-                .setQuestions(response.getQuestions().stream()
-                        .map(QuestionnaireConverter::convert)
-                        .collect(toList()))
-                .setHasNext(response.isHasNext());
+        return new QueryQuestionApiResponse(response.isHasNext(), response.getQuestions().stream()
+                .map(QuestionnaireConverter::convert)
+                .collect(toList()));
     }
 
     public static SubmitRequestDto convert(SubmitApiRequest request) {
@@ -52,21 +46,12 @@ public class QuestionnaireConverter {
     }
 
     public static SubmitApiResponse convert(SubmitResponseDto responseDto) {
-        return new SubmitApiResponse()
-                .setSuccessful(responseDto.isSuccessful())
-                .setResultDescription(responseDto.getResultDescription());
+        return new SubmitApiResponse(responseDto.isSuccessful(), responseDto.getResultDescription());
 
     }
 
     private static ApiQuestion convert(QuestionDto q) {
-        return new ApiQuestion()
-                .setIndex(q.getIndex())
-                .setDescription(q.getDescription())
-                .setOptions(q.getOptions().stream()
-                        .map(o -> new ApiOption()
-                                .setIndex(o.getIndex())
-                                .setSelected(o.isSelected())
-                                .setDescription(o.getDescription()))
-                        .collect(toList()));
+        return new ApiQuestion(q.getIndex(), q.getDescription(), q.getOptions().stream()
+                .map(o -> new ApiOption(o.getIndex(), o.getDescription(), o.isSelected())).collect(toList()));
     }
 }

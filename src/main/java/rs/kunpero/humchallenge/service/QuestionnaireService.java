@@ -54,8 +54,7 @@ public class QuestionnaireService {
 
         if (record == null) {
             log.warn("No record for current user [{}]", requestDto.getUser());
-            return new UpdateQuestionResponseDto()
-                    .setQuestions(new ArrayList<>());
+            return new UpdateQuestionResponseDto(new ArrayList<>());
         }
 
         List<QuestionDto> questions = record.getQuestions();
@@ -63,16 +62,14 @@ public class QuestionnaireService {
         Optional<QuestionDto> optionalQuestion = record.getQuestion(questionIndex);
         if (optionalQuestion.isEmpty()) {
             log.warn("No question with that index [{}]", questionIndex);
-            return new UpdateQuestionResponseDto()
-                    .setQuestions(questions);
+            return new UpdateQuestionResponseDto(questions);
         }
 
         QuestionDto question = optionalQuestion.get();
         List<OptionDto> options = question.getOptions();
         question.setOptions(updateOptions(options, optionIndex, questionIndex));
 
-        return new UpdateQuestionResponseDto()
-                .setQuestions(questions);
+        return new UpdateQuestionResponseDto(questions);
     }
 
     public QueryQuestionResponseDto queryQuestion(QueryQuestionRequestDto requestDto) throws ExternalServiceException {
@@ -113,9 +110,7 @@ public class QuestionnaireService {
                     }
 
                     var optionIndex = selectedOptions.get(0).getIndex();
-                    return new Answer()
-                            .setQuestionIndex(q.getIndex())
-                            .setOptionIndex(optionIndex);
+                    return new Answer(q.getIndex(), optionIndex);
                 })
                 .collect(toList());
 

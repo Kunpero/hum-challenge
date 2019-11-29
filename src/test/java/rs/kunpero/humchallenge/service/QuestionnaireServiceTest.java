@@ -217,10 +217,7 @@ public class QuestionnaireServiceTest {
     }
 
     private UpdateQuestionRequestDto buildUpdateRequest(String user, int questionIndex, int optionIndex) {
-        return new UpdateQuestionRequestDto()
-                .setUser(user)
-                .setQuestionIndex(questionIndex)
-                .setOptionIndex(optionIndex);
+        return new UpdateQuestionRequestDto(user, questionIndex, optionIndex);
     }
 
     private QueryQuestionRequestDto buildQueryQuestionRequest(String user) {

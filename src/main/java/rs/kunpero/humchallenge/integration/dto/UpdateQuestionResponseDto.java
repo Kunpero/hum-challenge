@@ -1,13 +1,15 @@
 package rs.kunpero.humchallenge.integration.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import rs.kunpero.humchallenge.service.dto.QuestionDto;
 
 import java.util.List;
 
-@Data
-@Accessors(chain = true)
+@Getter
+@AllArgsConstructor
+@ToString
 public class UpdateQuestionResponseDto {
     List<QuestionDto> questions;
 }

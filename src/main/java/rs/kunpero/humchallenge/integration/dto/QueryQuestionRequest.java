@@ -1,10 +1,12 @@
 package rs.kunpero.humchallenge.integration.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@Getter
 @AllArgsConstructor
+@ToString
 public class QueryQuestionRequest {
     private int nextIndex;
 }

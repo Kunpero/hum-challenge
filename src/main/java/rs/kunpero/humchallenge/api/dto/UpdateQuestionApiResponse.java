@@ -1,12 +1,14 @@
 package rs.kunpero.humchallenge.api.dto;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
-@Data
-@Accessors(chain = true)
+@AllArgsConstructor
+@Getter
+@ToString
 public class UpdateQuestionApiResponse {
     private List<ApiQuestion> questions;
 }

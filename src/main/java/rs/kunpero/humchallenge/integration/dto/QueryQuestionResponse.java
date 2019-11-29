@@ -2,11 +2,14 @@ package rs.kunpero.humchallenge.integration.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
+@ToString
 public class QueryQuestionResponse {
 
     private Question question;
