@@ -85,7 +85,7 @@ public class QuestionnaireService {
         //      \ -- /
         //
         // alien protection
-        if (!record.isHasNext()) {
+        if (!record.hasNext()) {
             log.info("No more questions available");
             return new QueryQuestionResponseDto()
                     .setHasNext(record.isHasNext())
@@ -138,7 +138,7 @@ public class QuestionnaireService {
         if (response.getQuestion() == null) {
             log.warn("No question with index [{}]", nextIndex);
             return new QueryQuestionResponseDto()
-                    .setHasNext(response.isHasNext())
+                    .setHasNext(response.hasNext())
                     .setQuestions(questions);
         }
         QuestionDto newQuestion = new QuestionDto()
@@ -152,7 +152,7 @@ public class QuestionnaireService {
                         .collect(toList()));
         questions.add(newQuestion);
         return new QueryQuestionResponseDto()
-                .setHasNext(response.isHasNext())
+                .setHasNext(response.hasNext())
                 .setQuestions(questions);
     }
 

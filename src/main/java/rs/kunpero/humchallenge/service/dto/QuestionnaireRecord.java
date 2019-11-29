@@ -12,6 +12,10 @@ public class QuestionnaireRecord {
 
     private List<QuestionDto> questions = new ArrayList<>();
 
+    public boolean hasNext() {
+        return hasNext;
+    }
+
     public Optional<QuestionDto> getQuestion(int questionIndex) {
         return this.questions.stream()
                 .filter(q -> q.getIndex() == questionIndex)

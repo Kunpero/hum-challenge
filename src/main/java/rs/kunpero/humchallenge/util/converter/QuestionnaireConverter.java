@@ -36,7 +36,7 @@ public class QuestionnaireConverter {
     }
 
     public static QueryQuestionApiResponse convert(QueryQuestionResponseDto response) {
-        return new QueryQuestionApiResponse(response.isHasNext(), response.getQuestions().stream()
+        return new QueryQuestionApiResponse(response.hasNext(), response.getQuestions().stream()
                 .map(QuestionnaireConverter::convert)
                 .collect(toList()));
     }

@@ -1,5 +1,6 @@
 package rs.kunpero.humchallenge.integration.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -14,7 +15,12 @@ public class QueryQuestionResponse {
 
     private Question question;
 
+    @Getter(AccessLevel.NONE)
     private boolean hasNext;
+
+    public boolean hasNext() {
+        return hasNext;
+    }
 
     @Data
     @AllArgsConstructor
