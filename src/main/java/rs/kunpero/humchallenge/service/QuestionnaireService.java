@@ -46,7 +46,7 @@ public class QuestionnaireService {
         this.externalService = externalService;
     }
 
-    public UpdateQuestionResponseDto updateQuestion(UpdateQuestionRequestDto requestDto) {
+    public UpdateQuestionResponseDto updateQuestion(UpdateQuestionRequestDto requestDto) throws ExternalServiceException {
         int questionIndex = requestDto.getQuestionIndex();
         int optionIndex = requestDto.getOptionIndex();
 
@@ -79,7 +79,12 @@ public class QuestionnaireService {
         QuestionnaireRecord record = records.get(user);
 
         List<QuestionDto> questions = record.getQuestions();
-
+        //       ----
+        //      /(o) \
+        //     (  <   )
+        //      \ -- /
+        //
+        // alien protection
         if (!record.isHasNext()) {
             log.info("No more questions available");
             return new QueryQuestionResponseDto()

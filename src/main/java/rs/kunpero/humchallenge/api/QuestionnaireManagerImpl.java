@@ -32,7 +32,7 @@ public class QuestionnaireManagerImpl implements QuestionnaireManager {
     }
 
     @Override
-    public UpdateQuestionApiResponse updateQuestion(UpdateQuestionApiRequest request) {
+    public UpdateQuestionApiResponse updateQuestion(UpdateQuestionApiRequest request) throws ExternalServiceException {
         Callable<UpdateQuestionApiResponse> action = () -> {
             UpdateQuestionRequestDto requestDto = convert(request);
             return convert(questionnaireService.updateQuestion(requestDto));
@@ -41,7 +41,7 @@ public class QuestionnaireManagerImpl implements QuestionnaireManager {
     }
 
     @Override
-    public QueryQuestionApiResponse queryQuestion(QueryQuestionApiRequest request) throws IllegalArgumentException, ExternalServiceException {
+    public QueryQuestionApiResponse queryQuestion(QueryQuestionApiRequest request) throws ExternalServiceException {
         Callable<QueryQuestionApiResponse> action = () -> {
             QueryQuestionRequestDto requestDto = convert(request);
             return convert(questionnaireService.queryQuestion(requestDto));
@@ -50,12 +50,12 @@ public class QuestionnaireManagerImpl implements QuestionnaireManager {
     }
 
     @Override
-    public SubmitApiResponse submit(SubmitApiRequest request) {
+    public SubmitApiResponse submit(SubmitApiRequest request) throws ExternalServiceException {
         Callable<SubmitApiResponse> action = () -> {
             try {
                 SubmitResponseDto responseDto = questionnaireService.submit(convert(request));
                 return convert(responseDto);
-            } catch (SubmitException | ExternalServiceException ex) {
+            } catch (SubmitException ex) {
                 return new SubmitApiResponse(false, ex.getMessage());
             }
         };

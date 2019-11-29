@@ -10,9 +10,30 @@ import rs.kunpero.humchallenge.util.exception.ExternalServiceException;
 
 public interface QuestionnaireManager {
 
+    /**
+     * Update question's option if exist
+     *
+     * @param request  {@link UpdateQuestionApiRequest}
+     * @return Current questions for user
+     * @throws ExternalServiceException Unexpected external service error
+     */
     UpdateQuestionApiResponse updateQuestion(UpdateQuestionApiRequest request);
 
-    QueryQuestionApiResponse queryQuestion(QueryQuestionApiRequest request) throws IllegalArgumentException, ExternalServiceException;
+    /**
+     * Query for next user's question
+     *
+     * @param request  {@link QueryQuestionApiRequest}
+     * @return Current questions for user
+     * @throws ExternalServiceException Unexpected external service error
+     */
+    QueryQuestionApiResponse queryQuestion(QueryQuestionApiRequest request) throws ExternalServiceException;
 
+    /**
+     * Submit user's answers
+     *
+     * @param request  {@link SubmitApiRequest}
+     * @return Result of questionnaire
+     * @throws ExternalServiceException Unexpected external service error
+     */
     SubmitApiResponse submit(SubmitApiRequest request);
 }

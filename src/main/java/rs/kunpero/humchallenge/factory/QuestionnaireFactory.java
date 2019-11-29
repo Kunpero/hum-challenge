@@ -11,12 +11,6 @@ public class QuestionnaireFactory {
     private static final Logger log = LoggerFactory.getLogger(QuestionnaireFactory.class);
 
     public static QuestionnaireManager getManager(ExternalService externalService) {
-        //       ----
-        //      /(o) \
-        //     (  <   )
-        //      \ -- /
-        //
-        // alien protection
         QuestionnaireService service = new QuestionnaireService(externalService);
         return new QuestionnaireManagerImpl(service);
     }

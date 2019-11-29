@@ -11,7 +11,7 @@ public interface ExternalService {
      * Query next question
      *
      * @param request If uuid in is not present in QueryQuestionRequest, then first question would be returned.
-     * @return {@code QueryQuestionResponse} - next available question
+     * @return {@link QueryQuestionResponse} - next available question
      */
     QueryQuestionResponse queryQuestion(QueryQuestionRequest request);
 
@@ -20,7 +20,7 @@ public interface ExternalService {
      * Submit client's answers
      *
      * @param request - Request contains list of filled answers
-     * @return {@code SubmitQuestionnaireResponse} - Questionnaire result description
+     * @return {@link SubmitQuestionnaireResponse} - Questionnaire result description
      */
     SubmitQuestionnaireResponse submitQuestionnaire(SubmitQuestionnaireRequest request);
 }
