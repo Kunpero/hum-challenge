@@ -5,13 +5,10 @@ buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
-    }
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
+apply from: "./libraries.gradle"
 
 sourceCompatibility = 1.11
 
@@ -24,17 +21,6 @@ jar {
         attributes 'Main-Class': 'rs.kunpero.humchallenge.App'
     }
 }
-
-shadowJar {
-    baseName = 'hum-challenge'
-    classifier = null
-    version = null
-    manifest {
-        inheritFrom project.tasks.jar.manifest
-    }
-}
-
-apply from: "./libraries.gradle"
 
 dependencies {
     implementation libraries.slf4jSimple

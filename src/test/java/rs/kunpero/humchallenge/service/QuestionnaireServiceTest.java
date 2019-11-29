@@ -1,8 +1,6 @@
 package rs.kunpero.humchallenge.service;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import rs.kunpero.humchallenge.integration.MockedExternalService;
 import rs.kunpero.humchallenge.integration.dto.UpdateQuestionRequestDto;
 import rs.kunpero.humchallenge.integration.dto.UpdateQuestionResponseDto;
@@ -23,7 +21,6 @@ import java.util.Map;
 
 import static rs.kunpero.humchallenge.integration.MockedExternalService.UNEXPECTED_ERROR;
 
-@RunWith(BlockJUnit4ClassRunner.class)
 public class QuestionnaireServiceTest {
 
     private static final String EMPTY_USER = "NONE";
