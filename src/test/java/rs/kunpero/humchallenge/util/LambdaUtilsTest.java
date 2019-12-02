@@ -1,11 +1,11 @@
-package rs.kunpero.optional;
+package rs.kunpero.humchallenge.util;
 
 import org.junit.Test;
 
 import java.util.function.Predicate;
 
-import static rs.kunpero.optional.util.LambdaUtils.isPalindrome;
-import static rs.kunpero.optional.util.LambdaUtils.isPrime;
+import static rs.kunpero.humchallenge.util.LambdaUtils.isPalindrome;
+import static rs.kunpero.humchallenge.util.LambdaUtils.isPrime;
 
 public class LambdaUtilsTest {
     private static Predicate<Long> isOddSimple = n -> n % 2 == 0;
