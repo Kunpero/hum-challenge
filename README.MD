@@ -5,4 +5,5 @@ As an argument `getManager` method uses implementation of `ExternalService` inte
 that implements logic from the task.
 
 <h2>Optional part</h2>
+
 Optional part is located in `LambdaUtils` class and also covered with simple tests.
